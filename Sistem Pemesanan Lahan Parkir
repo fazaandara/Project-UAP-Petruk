@@ -1,13 +1,21 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <list>
 #include <stack>
-#include <queue>
 #include <algorithm> 
 #include <memory> 
+#include <chrono>
+#include <thread>
 
 using namespace std;
+
+
+const string RESET = "\033[0m";
+const string RED = "\033[31m";
+const string GREEN = "\033[32m";
+const string YELLOW = "\033[33m";
+const string BLUE = "\033[34m";
+const string CYAN = "\033[36m";
 
 
 struct TempatParkir {
@@ -23,65 +31,85 @@ private:
     string kataSandi;
 
 public:
-
+    
     Pengguna(const string& nama, const string& sandi) : namaPengguna(nama), kataSandi(sandi) {}
 
-
+   
     string getNamaPengguna() const {
         return namaPengguna;
     }
 
-
+   
     string getKataSandi() const {
         return kataSandi;
     }
 };
 
 
-void tampilkanMenuUtama() {
+void tampilkanDenganAnimasi(const string& teks, int kecepatan = 50) {
+    for (char c : teks) {
+        cout << c << flush;
+        this_thread::sleep_for(chrono::milliseconds(kecepatan));
+    }
     cout << endl;
-    cout << "===== Menu Utama =====" << endl;
-    cout << "1. Registrasi" << endl;
-    cout << "2. Login" << endl;
-    cout << "3. Keluar" << endl;
-    cout << "Masukkan pilihan Anda: ";
+}
+
+
+void tampilkanMenuUtama() {
+    tampilkanDenganAnimasi(CYAN + "===== Menu Utama =====" + RESET);
+    tampilkanDenganAnimasi("1. Registrasi");
+    tampilkanDenganAnimasi("2. Login");
+    tampilkanDenganAnimasi("3. Keluar");
+    tampilkanDenganAnimasi("Masukkan pilihan Anda: ");
 }
 
 
 void registrasiPengguna(vector<shared_ptr<Pengguna>>& pengguna) {
     string nama, sandi;
-    cout << endl;
-    cout << "===== Registrasi Pengguna =====" << endl;
+
+    tampilkanDenganAnimasi(CYAN + "===== Registrasi Pengguna =====" + RESET);
     cout << "Masukkan nama pengguna: ";
     cin >> nama;
     cout << "Masukkan kata sandi: ";
     cin >> sandi;
 
+    
+    if (nama.empty() || sandi.empty()) {
+        tampilkanDenganAnimasi(RED + "Nama pengguna atau kata sandi tidak boleh kosong." + RESET);
+        return;
+    }
 
+   
     shared_ptr<Pengguna> penggunaBaru = make_shared<Pengguna>(nama, sandi);
     pengguna.push_back(penggunaBaru);
 
-    cout << "Registrasi berhasil!" << endl;
+    tampilkanDenganAnimasi(GREEN + "Registrasi berhasil!" + RESET);
 }
 
 
 shared_ptr<Pengguna> loginPengguna(vector<shared_ptr<Pengguna>>& pengguna) {
     string nama, sandi;
-    cout << endl;
-    cout << "===== Login Pengguna =====" << endl;
+
+    tampilkanDenganAnimasi(CYAN + "===== Login Pengguna =====" + RESET);
     cout << "Masukkan nama pengguna: ";
     cin >> nama;
     cout << "Masukkan kata sandi: ";
     cin >> sandi;
 
+  
+    if (nama.empty() || sandi.empty()) {
+        tampilkanDenganAnimasi(RED + "Nama pengguna atau kata sandi tidak boleh kosong." + RESET);
+        return nullptr;
+    }
 
+   
     for (auto& p : pengguna) {
         if (p->getNamaPengguna() == nama && p->getKataSandi() == sandi) {
             return p;
         }
     }
 
-    cout << "Nama pengguna atau kata sandi salah." << endl;
+    tampilkanDenganAnimasi(RED + "Nama pengguna atau kata sandi salah." + RESET);
     return nullptr;
 }
 
@@ -94,7 +122,7 @@ bool cariTempatParkirHelper(const vector<TempatParkir>& tempatParkir, const stri
     transform(lokasiParkir.begin(), lokasiParkir.end(), lokasiParkir.begin(), ::tolower);
 
     if (lokasiParkir.find(lokasi) != string::npos && tempatParkir[mid].tersedia) {
-        cout << "Tempat parkir ditemukan: " << tempatParkir[mid].nama << " di " << tempatParkir[mid].lokasi << endl;
+        tampilkanDenganAnimasi(GREEN + "Tempat parkir ditemukan: " + RESET + tempatParkir[mid].nama + " di " + tempatParkir[mid].lokasi);
         return true;
     }
 
@@ -104,28 +132,40 @@ bool cariTempatParkirHelper(const vector<TempatParkir>& tempatParkir, const stri
 
 void cariTempatParkir(const vector<TempatParkir>& tempatParkir) {
     string lokasi;
-    cout << endl;
-    cout << "===== Pencarian Tempat Parkir =====" << endl;
+
+    tampilkanDenganAnimasi(CYAN + "===== Pencarian Tempat Parkir =====" + RESET);
     cout << "Masukkan lokasi yang diinginkan: ";
     cin.ignore(); // Mengabaikan karakter newline yang tersisa
     getline(cin, lokasi); // Menggunakan getline untuk menangkap input dengan spasi
 
+   
+    if (lokasi.empty()) {
+        tampilkanDenganAnimasi(RED + "Lokasi tidak boleh kosong." + RESET);
+        return;
+    }
 
+   
     transform(lokasi.begin(), lokasi.end(), lokasi.begin(), ::tolower);
 
     if (!cariTempatParkirHelper(tempatParkir, lokasi, 0, tempatParkir.size() - 1)) {
-        cout << "Tidak ditemukan tempat parkir di lokasi tersebut." << endl;
+        tampilkanDenganAnimasi(RED + "Tidak ditemukan tempat parkir di lokasi tersebut." + RESET);
     }
 }
 
-
+// Fungsi untuk memesan tempat parkir menggunakan stack
 void pesanTempatParkir(vector<TempatParkir>& tempatParkir) {
     string namaTempat;
-    cout << endl;
-    cout << "===== Pemesanan Tempat Parkir =====" << endl;
+
+    tampilkanDenganAnimasi(CYAN + "===== Pemesanan Tempat Parkir =====" + RESET);
     cout << "Masukkan nama tempat parkir yang ingin dipesan: ";
     cin.ignore(); // Mengabaikan karakter newline yang tersisa
     getline(cin, namaTempat); // Menggunakan getline untuk menangkap input dengan spasi
+
+   
+    if (namaTempat.empty()) {
+        tampilkanDenganAnimasi(RED + "Nama tempat parkir tidak boleh kosong." + RESET);
+        return;
+    }
 
     stack<TempatParkir*> stackParkir;
     for (auto& tp : tempatParkir) {
@@ -137,10 +177,10 @@ void pesanTempatParkir(vector<TempatParkir>& tempatParkir) {
     if (!stackParkir.empty()) {
         TempatParkir* tp = stackParkir.top();
         tp->tersedia = false;
-        cout << "Pemesanan berhasil!" << endl;
-        cout << "Anda akan menerima struk dan barcode di email." << endl;
+        tampilkanDenganAnimasi(GREEN + "Pemesanan berhasil!" + RESET);
+        tampilkanDenganAnimasi("Anda akan menerima struk dan barcode di email.");
     } else {
-        cout << "Tempat parkir tidak tersedia atau nama salah." << endl;
+        tampilkanDenganAnimasi(RED + "Tempat parkir tidak tersedia atau nama salah." + RESET);
     }
 }
 
@@ -148,7 +188,7 @@ int main() {
 
     vector<shared_ptr<Pengguna>> pengguna;
 
-
+    
     vector<TempatParkir> tempatParkir = {
         {"Parkir A", "Jl. Sudirman", true},
         {"Parkir B", "Jl. Thamrin", true},
@@ -156,12 +196,23 @@ int main() {
     };
 
 
+    tampilkanDenganAnimasi(BLUE + "Selamat Datang di Sistem Manajemen Parkir!" + RESET, 100);
+
+   
     bool selesai = false;
     while (!selesai) {
         tampilkanMenuUtama();
 
         int pilihan;
         cin >> pilihan;
+
+        
+        if (cin.fail() || pilihan < 1 || pilihan > 3) {
+            cin.clear(); // Clear the error flag
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignore the rest of the input
+            tampilkanDenganAnimasi(RED + "Pilihan tidak valid." + RESET);
+            continue;
+        }
 
         switch (pilihan) {
             case 1:
@@ -170,18 +221,25 @@ int main() {
             case 2: {
                 shared_ptr<Pengguna> penggunaLogin = loginPengguna(pengguna);
                 if (penggunaLogin != nullptr) {
-
+                    // Jika login berhasil, tampilkan menu pengguna
                     bool logout = false;
                     while (!logout) {
-                        cout << endl;
-                        cout << "===== Menu Pengguna =====" << endl;
-                        cout << "1. Cari Tempat Parkir" << endl;
-                        cout << "2. Pesan Tempat Parkir" << endl;
-                        cout << "3. Logout" << endl;
-                        cout << "Masukkan pilihan Anda: ";
+                        tampilkanDenganAnimasi(CYAN + "===== Menu Pengguna =====" + RESET);
+                        tampilkanDenganAnimasi("1. Cari Tempat Parkir");
+                        tampilkanDenganAnimasi("2. Pesan Tempat Parkir");
+                        tampilkanDenganAnimasi("3. Logout");
+                        tampilkanDenganAnimasi("Masukkan pilihan Anda: ");
 
                         int pilihanPengguna;
                         cin >> pilihanPengguna;
+
+                       
+                        if (cin.fail() || pilihanPengguna < 1 || pilihanPengguna > 3) {
+                            cin.clear(); // Clear the error flag
+                            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignore the rest of the input
+                            tampilkanDenganAnimasi(RED + "Pilihan tidak valid." + RESET);
+                            continue;
+                        }
 
                         switch (pilihanPengguna) {
                             case 1:
@@ -191,22 +249,22 @@ int main() {
                                 pesanTempatParkir(tempatParkir);
                                 break;
                             case 3:
-                                cout << "Logout berhasil." << endl;
+                                tampilkanDenganAnimasi(GREEN + "Logout berhasil." + RESET);
                                 logout = true;
                                 break;
                             default:
-                                cout << "Pilihan tidak valid." << endl;
+                                tampilkanDenganAnimasi(RED + "Pilihan tidak valid." + RESET);
                         }
                     }
                 }
                 break;
             }
             case 3:
-                cout << "Terima kasih!" << endl;
+                tampilkanDenganAnimasi(GREEN + "Terima kasih!" + RESET);
                 selesai = true;
                 break;
             default:
-                cout << "Pilihan tidak valid." << endl;
+                tampilkanDenganAnimasi(RED + "Pilihan tidak valid." + RESET);
         }
     }
 
