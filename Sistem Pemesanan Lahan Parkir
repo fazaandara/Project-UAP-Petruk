@@ -39,6 +39,7 @@ public:
 
 
 void tampilkanMenuUtama() {
+    cout << endl;
     cout << "===== Menu Utama =====" << endl;
     cout << "1. Registrasi" << endl;
     cout << "2. Login" << endl;
@@ -49,7 +50,7 @@ void tampilkanMenuUtama() {
 
 void registrasiPengguna(vector<shared_ptr<Pengguna>>& pengguna) {
     string nama, sandi;
-
+    cout << endl;
     cout << "===== Registrasi Pengguna =====" << endl;
     cout << "Masukkan nama pengguna: ";
     cin >> nama;
@@ -66,7 +67,7 @@ void registrasiPengguna(vector<shared_ptr<Pengguna>>& pengguna) {
 
 shared_ptr<Pengguna> loginPengguna(vector<shared_ptr<Pengguna>>& pengguna) {
     string nama, sandi;
-
+    cout << endl;
     cout << "===== Login Pengguna =====" << endl;
     cout << "Masukkan nama pengguna: ";
     cin >> nama;
@@ -103,7 +104,7 @@ bool cariTempatParkirHelper(const vector<TempatParkir>& tempatParkir, const stri
 
 void cariTempatParkir(const vector<TempatParkir>& tempatParkir) {
     string lokasi;
-
+    cout << endl;
     cout << "===== Pencarian Tempat Parkir =====" << endl;
     cout << "Masukkan lokasi yang diinginkan: ";
     cin.ignore(); // Mengabaikan karakter newline yang tersisa
@@ -120,7 +121,7 @@ void cariTempatParkir(const vector<TempatParkir>& tempatParkir) {
 
 void pesanTempatParkir(vector<TempatParkir>& tempatParkir) {
     string namaTempat;
-
+    cout << endl;
     cout << "===== Pemesanan Tempat Parkir =====" << endl;
     cout << "Masukkan nama tempat parkir yang ingin dipesan: ";
     cin.ignore(); // Mengabaikan karakter newline yang tersisa
@@ -172,6 +173,7 @@ int main() {
 
                     bool logout = false;
                     while (!logout) {
+                        cout << endl;
                         cout << "===== Menu Pengguna =====" << endl;
                         cout << "1. Cari Tempat Parkir" << endl;
                         cout << "2. Pesan Tempat Parkir" << endl;
